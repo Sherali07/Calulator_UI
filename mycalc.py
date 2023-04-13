@@ -1,101 +1,134 @@
 from tkinter import *
 
-expression = ""
+win = Tk()
+win.geometry("312x324")
+win.resizable(0, 0)
+win.title("Calculator")
 
-def press(num):
+history_list = []
+
+
+def btn_click(item):
     global expression
-    expression = expression + str(num)
-    equation.set(expression)
+    expression = expression + str(item)
+    input_text.set(expression)
+  
 
-def equalpress():
-    try:
-        global expression
-        total = str(eval(expression))
-        equation.set(total)
-        expression = ""
-    except:
-        equation.set(" error ")
-        expression = ""
-
-def clear():
+def bt_clear():
     global expression
     expression = ""
-    equation.set("")
+    input_text.set("")
 
-def calculate_power():
+
+def bt_power():
     global expression
     expression = expression + "**"
-    equation.set(expression)
+    input_text.set(expression)
 
-if __name__ == "__main__":
-    gui = Tk()
-    gui.configure(background="white")
-    gui.title("Simple Calculator")
-    gui.geometry("270x150")
-    equation = StringVar()
-    expression_field = Entry(gui, justify="right", bg="powder blue", textvariable=equation)
-    expression_field.grid(columnspan=4, ipadx=70)
 
-    button1 = Button(gui, text=' 1 ', fg='black', bg='grey', command=lambda: press(1), height=1, width=7)
-    button1.grid(row=2, column=0)
+def bt_equal():
+    global expression 
+ 
+    result = str(eval(expression)) 
+    input_text.set(result) 
+    
+    append_to_history(expression, result)
+    expression = ""
+def append_to_history(expr, result):
+    history_list.append((expr, result))
+    
+    print(result)
 
-    button2 = Button(gui, text=' 2 ', fg='black', bg='grey', command=lambda: press(2), height=1, width=7)
-    button2.grid(row=2, column=1)
+def show_history():
+    history_window = Toplevel(win)
+    history_window.title("Calculator History")
 
-    button3 = Button(gui, text=' 3 ', fg='black', bg='grey', command=lambda: press(3), height=1, width=7)
-    button3.grid(row=2, column=2)
+    history_text = Text(history_window, width=50, height=10)
+    history_text.pack()
 
-    button4 = Button(gui, text=' 4 ', fg='black', bg='grey', command=lambda: press(4), height=1, width=7)
-    button4.grid(row=3, column=0)
+    for expr, result in history_list:
+        history_text.insert(END, expr + " = " + str(result) + "\n")
+        print(result)
+        print(expr)
+expression = ""
+input_text = StringVar()
 
-    button5 = Button(gui, text=' 5 ', fg='black', bg='grey', command=lambda: press(5), height=1, width=7)
-    button5.grid(row=3, column=1)
+input_frame = Frame(win, width=313, height=50, bd=0,
+                    highlightbackground="black", highlightcolor="black", highlightthickness=2)
 
-    button6 = Button(gui, text=' 6 ', fg='black', bg='grey', command=lambda: press(6), height=1, width=7)
-    button6.grid(row=3, column=2)
+input_frame.pack(side=TOP)
 
-    button7 = Button(gui, text=' 7 ', fg='black', bg='grey', command=lambda: press(7), height=1, width=7)
-    button7.grid(row=4, column=0)
+input_field = Entry(input_frame, font=('arial', 18, 'bold'),
+                    textvariable=input_text, width=40, bg="#eee", bd=0, justify=RIGHT)
 
-    button8 = Button(gui, text=' 8 ', fg='black', bg='grey', command=lambda: press(8), height=1, width=7)
-    button8.grid(row=4, column=1)
+input_field.grid(row=0, column=0)
+input_field.pack(ipady=10)
 
-    button9 = Button(gui, text=' 9 ', fg='black', bg='grey', command=lambda: press(9), height=1, width=7)
-    button9.grid(row=4, column=2)
+btns_frame = Frame(win, width=312, height=272.5, bg="grey")
+btns_frame.pack()
 
-    button0 = Button(gui, text=' 0 ', fg='black', bg='grey', command=lambda: press(0), height=1, width=7)
-    button0.grid(row=5, column=0)
+clear = Button(btns_frame, text="C", fg="black", width=23, height=3, bd=0, bg="#eee",
+               cursor="hand2", command=lambda: bt_clear())
+clear.grid(row=0, column=0, columnspan=2, padx=0, pady=0)
 
-    plus = Button(gui, text=' + ', fg='black', bg='grey', command=lambda: press("+"), height=1, width=7)
-    plus.grid(row=2, column=3)
+power = Button(btns_frame, text="^", fg="black", width=10, height=3, bd=0, bg="#eee",
+               cursor="hand2", command=lambda: bt_power())
+power.grid(row=0, column=2, padx=1, pady=1)
 
-    minus = Button(gui, text=' - ', fg='black', bg='grey',
-                   command=lambda: press("-"), height=1, width=7)
-    minus.grid(row=3, column=3)
+divide = Button(btns_frame, text="/", fg="black", width=10, height=3, bd=0, bg="#eee",
+                cursor="hand2", command=lambda: btn_click("/"))
+divide.grid(row=0, column=3, padx=1, pady=1)
 
-    multiply = Button(gui, text=' * ', fg='black', bg='grey',
-                      command=lambda: press("*"), height=1, width=7)
-    multiply.grid(row=4, column=3)
+seven = Button(btns_frame, text="7", fg="black", width=11, height=3, bd=0, bg="#fff",
+               cursor="hand2", command=lambda: btn_click(7))
+seven.grid(row=1, column=0, padx=1, pady=1)
 
-    divide = Button(gui, text=' / ', fg='black', bg='grey',
-                    command=lambda: press("/"), height=1, width=7)
-    divide.grid(row=5, column=3)
+eight = Button(btns_frame, text="8", fg="black", width=11, height=3, bd=0, bg="#fff",
+               cursor="hand2", command=lambda: btn_click(8))
+eight.grid(row=1, column=1, padx=1, pady=1)
 
-    equal = Button(gui, text=' = ', fg='black', bg='grey',
-                   command=equalpress, height=1, width=7)
-    equal.grid(row=5, column=2)
+nine = Button(btns_frame, text="9", fg="black", width=10, height=3, bd=0, bg="#fff",
+              cursor="hand2", command=lambda: btn_click(9))
+nine.grid(row=1, column=2, padx=1, pady=1)
 
-    clear = Button(gui, text='Clear', fg='black', bg='grey',
-                   command=clear, height=1, width=7)
-    clear.grid(row=5, column='1')
+multiply = Button(btns_frame, text="*", fg="black", width=10, height=3, bd=0, bg="#eee",
+                  cursor="hand2", command=lambda: btn_click("*")) .grid(row=1, column=3, padx=1, pady=1)
+four = Button(btns_frame, text="4", fg="black", width=11, height=3, bd=0, bg="#fff",
+              cursor="hand2", command=lambda: btn_click(4)).grid(row=2, column=0, padx=1, pady=1)
 
-    Decimal = Button(gui, text='.', fg='black', bg='grey',
-                     command=lambda: press('.'), height=1, width=7)
-    Decimal.grid(row=6, column=0)
+five = Button(btns_frame, text="5", fg="black", width=11, height=3, bd=0, bg="#fff",
+              cursor="hand2", command=lambda: btn_click(5)).grid(row=2, column=1, padx=1, pady=1)
 
-    power = Button(gui, text=' ^ ', fg='black', bg='grey',
-                 command=calculate_power, height=1, width=7 )
+six = Button(btns_frame, text="6", fg="black", width=10, height=3, bd=0, bg="#fff",
+             cursor="hand2", command=lambda: btn_click(6)).grid(row=2, column=2, padx=1, pady=1)
 
-    power.grid(row=6, column=1)
+minus = Button(btns_frame, text="-", fg="black", width=10, height=3, bd=0, bg="#eee",
+               cursor="hand2", command=lambda: btn_click("-")).grid(row=2, column=3, padx=1, pady=1)
 
-    gui.mainloop()
+
+one = Button(btns_frame, text="1", fg="black", width=11, height=3, bd=0, bg="#fff",
+             cursor="hand2", command=lambda: btn_click(1)).grid(row=3, column=0, padx=1, pady=1)
+
+two = Button(btns_frame, text="2", fg="black", width=11, height=3, bd=0, bg="#fff",
+             cursor="hand2", command=lambda: btn_click(2)).grid(row=3, column=1, padx=1, pady=1)
+
+three = Button(btns_frame, text="3", fg="black", width=10, height=3, bd=0, bg="#fff",
+               cursor="hand2", command=lambda: btn_click(3)).grid(row=3, column=2, padx=1, pady=1)
+
+plus = Button(btns_frame, text="+", fg="black", width=10, height=3, bd=0, bg="#eee",
+              cursor="hand2", command=lambda: btn_click("+")).grid(row=3, column=3, padx=1, pady=1)
+
+
+zero = Button(btns_frame, text="0", fg="black", width=11, height=3, bd=0, bg="#fff", cursor="hand2",
+              command=lambda: btn_click(0)).grid(row=4, column=0, columnspan=1, padx=1, pady=1)
+
+history_btn = Button(btns_frame, text="History", fg="black", width=11, height=3, bd=0, bg="#eee",
+                     cursor="hand2", command=show_history).grid(row=4, column=1, padx=1, pady=1)
+
+point = Button(btns_frame, text=".", fg="black", width=10, height=3, bd=0, bg="#eee",
+               cursor="hand2", command=lambda: btn_click(".")).grid(row=4, column=2, padx=1, pady=1)
+
+equals = Button(btns_frame, text="=", fg="black", width=10, height=3, bd=0, bg="#eee",
+                cursor="hand2", command=lambda: bt_equal()).grid(row=4, column=3, padx=1, pady=1)
+
+win.mainloop()
